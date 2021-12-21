@@ -61,4 +61,5 @@ Code/Makefile.dos
 Code/Makefile.irix
 Code/spec
 Code/stage00.c
+Builds/nu0.n64
 
