@@ -54,12 +54,10 @@ dkms.conf
 Code/readme.txt
 Code/compile.bat
 Code/gfxinit.c
-Code/graphic.c
 Code/graphic.h
 Code/Makefile
 Code/Makefile.dos
 Code/Makefile.irix
 Code/spec
-Code/stage00.c
 Builds/nu0.n64
 
