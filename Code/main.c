@@ -17,12 +17,13 @@ void mainproc(void *dummy)
   while(1);
 }
 
-//This is called at the start of a screen refresh.
+//This is synchronous with the graphics thread. Is called by the graphics thread.
 void RetraceCallback(int pendingTasks)
 {
-  Stage00_Update(); //Used to update parallel to main thread.
-  //If the amount of remaining tasks nearly finished.
-  if(pendingTasks < 1)
+  Stage00_Update(); //Used to update every time graphics thread executes.
+
+  //If the amount of remaining tasks on the graphics thread is done.
+  if(pendingTasks <= 0)
   {
     Stage00_UpdateFrame(); //Handles gameplay.
     Stage00_Draw(); //Handles custom graphics.
