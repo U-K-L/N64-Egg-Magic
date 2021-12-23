@@ -25,13 +25,28 @@ void Stage00_UpdateFrame()
 
 void Stage00_Draw()
 {
+    int x =  SCREEN_WD/2;
+    int y =  SCREEN_HT/2;
+    int radius = 70;
+    int offsetX = 0;
+    int offsetY = 0;
+    int width = 16;
+    int height = 16;
+    float speed = 3.0f;
     u8 colorB = 0;
     u8 colorR = 0;
     glistp = glist;
     RCPInit(glistp);
     colorB = (u8)floor(sinf(time)*255);
     colorR = (u8)floor(cosf(time)*255);
+    offsetX = (int)floor(cosf(time*speed)*radius);
+    offsetY = (int)floor(sinf(time*speed)*radius);
     ClearBackground(colorR, colorR, colorB);
+    gDPSetCycleType(glistp++, G_CYC_FILL);
+    gDPSetFillColor(glistp++, (GPACK_RGBA5551(255, 0, 255, 1) << 16 |
+                           GPACK_RGBA5551(255, 0, 255, 1)));
+    gDPFillRectangle(glistp++, offsetX+x-width, offsetY+y-height, offsetX+x+width, offsetY+y+height);
+
     gDPFullSync(glistp++);
     gSPEndDisplayList(glistp++);
     nuGfxTaskStart(glist, (s32)(glistp - glist) * sizeof(Gfx),
