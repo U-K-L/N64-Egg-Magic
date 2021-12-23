@@ -5,7 +5,8 @@
     #define SCREEN_HT 240
 
     #define GLIST_LENGTH 2058
-    extern Gfx glist[GLIST_LENGTH];
-    extern Gfx* glistp;
+    Gfx glist[GLIST_LENGTH];
+    Gfx* glistp;
+    void RCPInit(Gfx *glistp);
 
 #endif

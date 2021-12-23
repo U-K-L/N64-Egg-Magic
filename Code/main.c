@@ -5,6 +5,7 @@
 
 #include <nusys.h>
 #include "stages.h"
+#include "config.h"
 
 static void RetraceCallback(int pendingTasks);
 void mainproc(void *dummy)
