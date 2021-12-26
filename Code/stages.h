@@ -6,5 +6,7 @@
     void Stage00_UpdateFrame();
 	void Stage00_Draw();
 	void DisplayText(const char*text);
+	void ClearBackground(u8 r, u8 g, u8 b);
+
  
 #endif

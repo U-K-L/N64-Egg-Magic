@@ -8,5 +8,6 @@
     Gfx glist[GLIST_LENGTH];
     Gfx* glistp;
     void RCPInit(Gfx *glistp);
+    void gfxClearCfb(void);
 
 #endif

@@ -10,7 +10,6 @@
 static void RetraceCallback(int pendingTasks);
 void mainproc(void *dummy)
 {
-  
   nuGfxInit();//Initializes the graphics thread.
   Stage00_Init();
   nuGfxFuncSet((NUGfxFunc)RetraceCallback); //Sets function to be called each screen refresh.
