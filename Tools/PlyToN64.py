@@ -96,11 +96,10 @@ for line in Lines:
             vertices += "}; //size of verts --- "+str(size)
             vertices += "\n\n\n\n\n"
             vertices += "static const Gfx "+ name +"_dl[] = {\n"
-            vertices += "   " + "gsDPPipeSync(),\n"
-            vertices += "   " + "gsDPSetCycleType(G_CYC_1CYCLE),\n"
+            vertices += "   " + "gsDPSetCycleType(G_CYC_2CYCLE),\n"
             vertices += "   " + "gsSPTexture(0, 0, 0, 0, G_OFF),\n"
-            vertices += "   " + "gsSPSetGeometryMode(G_SHADE | G_CULL_BACK),\n"
-            vertices += "   " + "gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),\n"
+            vertices += "   " + "gsDPSetRenderMode(G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2),\n"
+            vertices += "   " + "gsSPSetGeometryMode(G_SHADE | G_CLIPPING | G_SHADING_SMOOTH | G_TEXTURE_GEN | G_CULL_BACK | G_ZBUFFER),\n"
             vertices += "   " + "gsSPVertex(" + name + "_vtx," + str(size) + ",0),\n"
             begin = False
             index += 1
@@ -109,7 +108,7 @@ for line in Lines:
         begin = False
         index += 1
 
-
+vertices += "\n   " + "gsDPPipeSync(),"
 vertices += "\n    gsSPEndDisplayList(),"
 vertices += "\n};\n\n" +"void "+ name + "_mesh();" + "\n" + "void " + name + "_mesh(){"
 vertices += "\n    " + "current_mesh.size = " + str(size) +";" 
