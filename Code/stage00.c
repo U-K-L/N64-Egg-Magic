@@ -7,11 +7,18 @@
 #include "graphic.h"
 #include <assert.h>
 
+//Models:
+#include "../Models/Monkey.h"
+#include "../Models/Cylinder.h"
+#include "../Models/N64Logo.h"
+#include "../Models/PlyCube.h"
+#include "../Models/N64LogoSmallColor.h"
+
 void CreateMesh(Dynamic* dynamicp, Mesh mesh);
 Dynamic      gfx_dynamic;
 Mesh         current_mesh;
-
-
+Mesh         current_mesh2;
+u16 perspNorm;
 void Stage00_Init()
 {
 
@@ -39,26 +46,42 @@ void Stage00_Draw()
   //Clears Z buffer.
   gfxClearCfb();
 
+/*
   guOrtho(&gfx_dynamic.projection,
 	  -(float)SCREEN_WD/2.0F, (float)SCREEN_WD/2.0F,
 	  -(float)SCREEN_HT/2.0F, (float)SCREEN_HT/2.0F,
 	  1.0F, 10.0F, 1.0F);
-  guRotate(&gfx_dynamic.modeling, 0.0F, 0.0F, 0.0F, 1.0F);
-  test_mesh();
+              */
 
-  CreateMesh(&gfx_dynamic, current_mesh);
+ guPerspective(&gfx_dynamic.projection, &perspNorm, 60, 320.0f / 240.0f,
+        1, 1024, 1.0F);
 
 
-  /* End the construction of the display list  */
-  gDPFullSync(glistp++);
-  gSPEndDisplayList(glistp++);
+    guLookAt(&gfx_dynamic.camera,            //
+    200.0f, 200.0f, 700.0f, // eye
+    0.0f, 0.0f, 0.0f,       // look at
+    0.0f, 1.0f, 0.0f);      // up
+    shade_mesh(&current_mesh2);
+    N64LogoSmallColor_mesh();
+    
 
-  /* Check if all are put in the array  */
-  assert(glistp - glist < GLIST_LENGTH);
-  /* Activate the RSP task.  Switch display buffers at the end of the task. */
-  nuGfxTaskStart(glist,
-		 (s32)(glistp - glist) * sizeof (Gfx),
-		 NU_GFX_UCODE_F3DEX , NU_SC_SWAPBUFFER);
+    //gSPDisplayList(glistp++, OS_K0_TO_PHYSICAL(current_mesh2.settings));
+    gSPDisplayList(glistp++, OS_K0_TO_PHYSICAL(current_mesh.settings));
+
+    CreateMesh(&gfx_dynamic, current_mesh);
+    //gSPDisplayList(glistp++, OS_K0_TO_PHYSICAL(current_mesh2.settings));
+  
+    /* End the construction of the display list  */
+    gDPFullSync(glistp++);
+    gSPEndDisplayList(glistp++);
+        /* Check if all are put in the array  */
+    assert(glistp - glist < GLIST_LENGTH);
+    /* Activate the RSP task.  Switch display buffers at the end of the task. */
+    nuGfxTaskStart(glist,
+            (s32)(glistp - glist) * sizeof (Gfx),
+            NU_GFX_UCODE_F3DEX , NU_SC_SWAPBUFFER);
+
+
     /*
     glistp = glist;
     RCPInit(glistp);
@@ -148,6 +171,7 @@ void Stage00_Draw()
         */
 }
 
+
 void ClearBackground(u8 r, u8 g, u8 b)
 {
     //set framebuffer to a single color
@@ -173,11 +197,23 @@ void DisplayText(const char*text)
 
 void CreateMesh(Dynamic* dynamicp, Mesh mesh)
 {
+    
+    //Set the projection matrix of the current screen of the N64
     gSPMatrix(glistp++,OS_K0_TO_PHYSICAL(&(dynamicp->projection)),
         G_MTX_PROJECTION|G_MTX_LOAD|G_MTX_NOPUSH);
+
+    //Set the current camera.
+    gSPMatrix(glistp++, K0_TO_PHYS(&(dynamicp->camera)),
+        G_MTX_PROJECTION | G_MTX_MUL | G_MTX_NOPUSH);
+
+    //Set the model matrix.
     gSPMatrix(glistp++,OS_K0_TO_PHYSICAL(&(dynamicp->modeling)),
         G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
-     gSPDisplayList(glistp++, OS_K0_TO_PHYSICAL(mesh.settings));
-     
+
+    guRotate(&gfx_dynamic.rotate_x, time*100, 0.0F, 1.0F, 0.0F);
+    gSPMatrix(glistp++, K0_TO_PHYS(&(gfx_dynamic.rotate_x)),
+        G_MTX_PROJECTION | G_MTX_MUL | G_MTX_NOPUSH);
+
+
 
 }

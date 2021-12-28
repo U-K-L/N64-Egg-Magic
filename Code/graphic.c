@@ -2,6 +2,7 @@
 #include "config.h"
 
 
+
 //View port, device coordinate system.
 //Top left (0,0), bottom right (320,240)
 static Vp viewport = {
@@ -11,7 +12,9 @@ static Vp viewport = {
 
 Gfx const rspinit_dl[] = {
     gsSPViewport(&viewport), //Set viewport.
-    gsSPClearGeometryMode(0x00000000), //What each bit means: http://n64devkit.square7.ch/n64man/gsp/gSPClearGeometryMode.htm
+     //What each bit means: http://n64devkit.square7.ch/n64man/gsp/gSPClearGeometryMode.htm
+    gsSPClearGeometryMode(0xFFFFFFFF),
+    gsSPSetGeometryMode(G_SHADE | G_CLIPPING | G_SHADING_SMOOTH | G_TEXTURE_GEN | G_CULL_BACK),
     gsSPTexture(0, 0, 0, 0, G_OFF), //Disable textures.
     gsSPEndDisplayList(), //Ends the display list!
 
@@ -21,14 +24,15 @@ Gfx const rspinit_dl[] = {
 //Note gsXY vs gXY, the former is a static definition. ie gsSPVertex (static) vs gSPVertex (dynamic)
 Gfx const rdpinit_dl[] = {
     gsDPSetCycleType(G_CYC_2CYCLE),
-    gsDPSetScissor(G_SC_NON_INTERLACE, 0, 0, SCREEN_WD, SCREEN_HT),
-    gsDPSetCombineKey(G_CK_NONE),
-    gsDPSetAlphaCompare(G_AC_THRESHOLD),
-    gsDPSetRenderMode(G_RM_NOOP, G_RM_NOOP2),
-    gsDPSetColorDither(G_CD_DISABLE),
+    gsSPTexture(0, 0, 0, 0, G_OFF),
+    gsDPSetRenderMode(G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2),
+    gsSPSetGeometryMode(G_SHADE | G_CLIPPING | G_SHADING_SMOOTH | G_TEXTURE_GEN | G_CULL_BACK),
+    gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsDPPipeSync(),
     gsSPEndDisplayList(),
+    
 };
+
 
 
 void RCPInit(Gfx *glistp)
@@ -40,6 +44,7 @@ void RCPInit(Gfx *glistp)
 
 void gfxClearCfb(void)
 {
+  
   /* Clear the Z-buffer  */
   gDPSetDepthImage(glistp++, OS_K0_TO_PHYSICAL(nuGfxZBuffer));
   gDPSetCycleType(glistp++, G_CYC_FILL);
