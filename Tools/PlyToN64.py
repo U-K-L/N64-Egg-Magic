@@ -13,6 +13,10 @@ data_object = {}
 scalingFactor = 50
 center = 0
 
+verticesList = []
+vertexCache = []
+indexer = 0
+
 if(len(sys.argv) > 2):
     scalingFactor = int(sys.argv[2])
 if(len(sys.argv) > 3):
@@ -21,9 +25,13 @@ words = sys.argv[1].split("/")
 
 name = words[len(words)-1].replace(".ply", "")
 
-vertices = "static const Vtx " + name+ "_vtx[] = {\n"
+
+
+vertices = "static const Vtx " + name+ "_vtx" +str(indexer)+"[]= {\n"
 with open(sys.argv[1], 'r') as f:
     Lines = f.readlines()
+
+
 
 def getProperties(_aline):
     temp = _aline
@@ -43,9 +51,9 @@ def createString(vertex):
     s = "0"
     t = "0"
     if("property float s" in vertex):
-        s = str(math.floor(float(vertex["property float s"])))
+        s = str(math.floor(float(vertex["property float s"]))) + "<< 6"
     if("property float t" in vertex):
-        t = str(math.floor(float(vertex["property float t"])))
+        t = str(math.floor(float(vertex["property float t"]))) + "<< 6"
 
     r = "0xFF"
     g = "0xFF"
@@ -62,57 +70,105 @@ def createString(vertex):
     vert = ("   {"+x+","+y+","+z + ",  " + "0" + ",  " + s + "," + t + ",  " + r + "," + g + "," + b + "," + a + "},\n")
     global vertices
     vertices += vert
-    
-def getValues(line):
-    tokens = line.split()
-    vertex = {}
-    for i in range(len(tokens)):
-        vertex[definitions[i]] = tokens[i]
-    createString(vertex)
 
-def getTriangles(line):
-    tokens = line.split()
-    command = "    gsSP1Triangle(" + tokens[1] + "," + tokens[2] + "," + tokens[3] + ", 0),"
+
+def getValues(line):
+    global indexer
     global vertices
-    vertices += "\n"+command
+    totalVertexCount =0
+    for vert in vertexCache:
+        totalVertexCount += 1
+        if(totalVertexCount%32 == 0):
+            indexer += 1
+            vertices += "\n};"
+            vertices += "\nstatic const Vtx " + name+ "_vtx" +str(indexer)+"[]= {\n"
+        tokens = vert.split()
+        vertex = {}
+        for i in range(len(tokens)):
+            vertex[definitions[i]] = tokens[i]
+        createString(vertex)
+    vertices += "\n};"
+
+def getTriangles():
+    global vertices
+    index = 0
+    indexer = 0
+    triangleCount = 0
+    for i in range(0, len(vertexCache), 3):
+        if triangleCount % 11 == 0:
+            index = 0
+            command = "    gsSP1Triangle(" + str(index) + "," + str(index+1) + "," + str(index+2) + ", 0),"
+            vertices += "   " + "\ngsSPVertex(" + name + "_vtx"+str(indexer)+"," + "33" + ","+"0"+"),\n"
+
+            indexer += 1
+            triangleCount = 0
+        else:
+            command = "    gsSP1Triangle(" + str(index) + "," + str(index+1) + "," + str(index+2) + ", 0),"
+        index += 3
+        vertices += "\n"+command
+        triangleCount += 1
 
 for line in Lines:
     getProperties(line)
 
 
+def buildVertexCache(line, triangleCount):
+    tokens = line.split()
+    vertexCache.append(verticesList[int(tokens[1])])
+    vertexCache.append(verticesList[int(tokens[2])])
+    vertexCache.append(verticesList[int(tokens[3])])
+
+
+#Store all the vertices into the list.
+def getVertexList():
+    end_of_header = False
+    index = 0
+    triangleCount = 0
+    for line in Lines:
+        global size
+        if(end_of_header == True and index < size):
+            verticesList.append(line)
+            index += 1
+        elif(index >= size):
+            buildVertexCache(line, triangleCount)
+            triangleCount += 1
+        if("end_header"in line):
+            end_of_header = True
+
+
+getVertexList()
 
 begin = False
 index = 0
+getValues(line)
 for line in Lines:
+
     if("end_header" in line):
         begin = True
         index = 0
         continue
     if(begin == True):
-        getValues(line)
         index += 1
     if(index >= size):
         if(index == size):
-            vertices += "}; //size of verts --- "+str(size)
             vertices += "\n\n\n\n\n"
             vertices += "static const Gfx "+ name +"_dl[] = {\n"
             vertices += "   " + "gsDPSetCycleType(G_CYC_2CYCLE),\n"
             vertices += "   " + "gsSPTexture(0, 0, 0, 0, G_OFF),\n"
             vertices += "   " + "gsDPSetRenderMode(G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2),\n"
             vertices += "   " + "gsSPSetGeometryMode(G_SHADE | G_CLIPPING | G_SHADING_SMOOTH | G_TEXTURE_GEN | G_CULL_BACK | G_ZBUFFER),\n"
-            vertices += "   " + "gsSPVertex(" + name + "_vtx," + str(size) + ",0),\n"
+            #vertices += "   " + "gsSPVertex(" + name + "_vtx," + str(size) + ",0),\n"
             begin = False
             index += 1
             continue
-        getTriangles(line)
         begin = False
         index += 1
-
+getTriangles()
 vertices += "\n   " + "gsDPPipeSync(),"
 vertices += "\n    gsSPEndDisplayList(),"
 vertices += "\n};\n\n" +"void "+ name + "_mesh();" + "\n" + "void " + name + "_mesh(){"
 vertices += "\n    " + "current_mesh.size = " + str(size) +";" 
-vertices += "\n    " + "current_mesh.vertices = " + name + "_vtx" +";" 
+vertices += "\n    " + "current_mesh.vertices = " + name + "_vtx0" +";" 
 vertices += "\n    " + "current_mesh.settings = " + name + "_dl" +";" + "\n};"
 print(vertices)
 

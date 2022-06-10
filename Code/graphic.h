@@ -1,7 +1,7 @@
 #ifndef N64_GRAPHIC_H
 #define N64_GRAPHIC_H
 
-#define SP 100 //Scale of the entire rendering engine, no floating point so 100 default value.
+#define SP 128 //Scale of the entire rendering engine, no floating point so 100 default value.
 
 
 typedef struct 
@@ -16,31 +16,57 @@ extern Mesh current_mesh2;
 
 
 // _MESHES_
-static const Vtx triangle_vtx[] = {
-  //x,y,z (position), flag (used to align memory), u,v (texture coords), R,G,B,A (vertex color)
-  {-SP/2,-SP/2, -5,  0,  0,0,  0xff,0xff,0xff,0xff},
-  {SP/2,-SP/2,  -5,  0,  0,0,  0xff,0xff,0xff,0xff},
-  {0,SP/2,    -5,  0,  0,0,  0xff,0xff,0xff,0xff},
+static Vtx triangle_vtx[4] =  {
+    {   -64, 64, -5, 0, 0  << 6, 0  << 6, 255, 255, 255, 255},
+    {   64,  64, -5, 0, 1 << 6, 0  << 6, 255, 0,   0,   255},
+    {   64, -64, -5, 0, 1 << 6, 0 << 6, 0,   255, 0,   255},
+    {   -64,-64, -5, 0, 0  << 6, 0 << 6, 0,   0,   255, 255},
+};
+unsigned short favicon[] = {
+0xfffe, 0xfffe, 0xfffe, 0xfffe, 0xfffe, 0xfffe, 0xffff, 0xbdef, 0xbdef, 0xffff, 0xfffe, 0xfffe, 0xfffe, 0xfffe, 0xfffe, 0xfffe, 
+0xfffe, 0xfffe, 0xfffe, 0xfffe, 0xfffe, 0xffff, 0xbdef, 0xffff, 0xffff, 0xbdef, 0xffff, 0xfffe, 0xfffe, 0xfffe, 0xfffe, 0xfffe, 
+0xfffe, 0xfffe, 0xfffe, 0xfffe, 0xffff, 0xbdef, 0xffff, 0xffff, 0xffff, 0xffff, 0xbdef, 0xffff, 0xfffe, 0xfffe, 0xfffe, 0xfffe, 
+0xfffe, 0xfffe, 0xfffe, 0xffff, 0xffff, 0xbdef, 0xffff, 0xffff, 0xffff, 0xffff, 0xbdef, 0xffff, 0xffff, 0xfffe, 0xfffe, 0xfffe, 
+0xfffe, 0xfffe, 0xffff, 0xffff, 0xbdef, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xbdef, 0xffff, 0xffff, 0xfffe, 0xfffe, 
+0xfffe, 0xffff, 0xffff, 0xffff, 0xbdef, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xbdef, 0xffff, 0xffff, 0xffff, 0xfffe, 
+0xffff, 0xffff, 0xffff, 0xbdef, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xbdef, 0xffff, 0xffff, 0xffff, 
+0xfffe, 0xfffe, 0xfffe, 0xffff, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0xffff, 0xfffe, 0xfffe, 0xfffe, 
+0xfffe, 0xfffe, 0xfffe, 0x0001, 0xffff, 0xffff, 0x0001, 0x0001, 0x0001, 0x0001, 0xffff, 0xffff, 0x0001, 0xfffe, 0xfffe, 0xfffe, 
+0xfffe, 0xfffe, 0xfffe, 0xffff, 0x0001, 0x0001, 0xffff, 0x0001, 0x0001, 0xffff, 0x0001, 0x0001, 0xffff, 0xfffe, 0xfffe, 0xfffe, 
+0xfffe, 0xfffe, 0xfffe, 0xffff, 0x0001, 0x0001, 0xffff, 0x0001, 0x0001, 0xffff, 0x0001, 0x0001, 0xffff, 0xfffe, 0xfffe, 0xfffe, 
+0xfffe, 0xfffe, 0xffff, 0x0001, 0xffff, 0xffff, 0x0001, 0x0001, 0x0001, 0x0001, 0xffff, 0xffff, 0x0001, 0xffff, 0xfffe, 0xfffe, 
+0xfffe, 0xbdef, 0xffff, 0xffff, 0xbdef, 0xbdef, 0xffff, 0x0001, 0x0001, 0xffff, 0xbdef, 0xbdef, 0xffff, 0xffff, 0xbdef, 0xfffe, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
+0xbdef, 0xffff, 0xffff, 0xffff, 0xbdef, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xbdef, 0xffff, 0xffff, 0xffff, 0xbdef, 
+0xffff, 0xffff, 0xffff, 0xffff, 0xfffe, 0xffff, 0xffff, 0xfffe, 0xfffe, 0xffff, 0xffff, 0xfffe, 0xffff, 0xffff, 0xffff, 0xffff, 
+};
+
+unsigned short blue[] = {
+  0x00ff, 0x0f0f
 };
 
 static const Gfx triangle_dl[] = {
-    gsSPVertex(triangle_vtx,8, 0),
-    gsDPPipeSync(),
-    gsDPSetCycleType(G_CYC_1CYCLE),
-    gsSPTexture(0, 0, 0, 0, G_OFF),
-    gsDPSetRenderMode(G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2),
-    gsSPClearGeometryMode(0xFFFFFFFF),
-    gsSPSetGeometryMode(G_SHADE| G_SHADING_SMOOTH),
-    gsSP1Triangle(0,1,2,0),
-    gsSPEndDisplayList(),
+  gsSPVertex(triangle_vtx,4, 0),
+  gsDPPipeSync(),
+  gsDPSetCycleType(G_CYC_1CYCLE),
+  gsDPSetRenderMode(G_RM_AA_ZB_XLU_DECAL, G_RM_AA_ZB_XLU_DECAL2),
+  gsSPTexture(0x8000, 0x8000, 0, 0, G_ON),
+  gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
+  gsDPSetTextureFilter(G_TF_POINT),
+  gsDPLoadTextureBlock(blue, G_IM_FMT_RGBA, G_IM_SIZ_16b, 2, 1, 0,
+          G_TX_WRAP | G_TX_MIRROR, G_TX_WRAP | G_TX_MIRROR,
+          4, 4, G_TX_NOLOD, G_TX_NOLOD),
+  gsSP1Triangle(0,1,2,0),
+  gsSP1Triangle(0,2,3,0),
+  gsSPEndDisplayList(),
 };
 
-void triangle_mesh(Mesh mesh);
-void triangle_mesh(Mesh mesh)
+void triangle_mesh(Mesh *mesh);
+void triangle_mesh(Mesh *mesh)
 {
-  mesh.size = 8;
-  mesh.vertices = triangle_vtx;
-  mesh.settings = triangle_dl;
+  mesh->size = 4;
+  mesh->vertices = triangle_vtx;
+  mesh->settings = triangle_dl;
 };
 
 
@@ -62,45 +88,48 @@ typedef struct view {
 	short   view_transformation[4];
 	long long int   force_structure_alignment;
 };
-
 //Example meshes for debugging:
 static const Vtx shade_vtx[] =  {
     // -X face, bright red.
-    {{{-SP, -SP, -SP}, 0, {0, 0}, {255, 128, 128, 255}}},
-    {{{-SP, -SP, +SP}, 0, {0, 0}, {255, 128, 128, 255}}},
-    {{{-SP, +SP, -SP}, 0, {0, 0}, {255, 128, 128, 255}}},
-    {{{-SP, +SP, +SP}, 0, {0, 0}, {255, 128, 128, 255}}},
+    {{{-SP, -SP, -SP}, 0, {0  << 6, 15 << 6}, {255, 128, 128, 255}}},
+    {{{-SP, -SP, +SP}, 0, {0  << 6, 0  << 6}, {255, 128, 128, 255}}},
+    {{{-SP, +SP, -SP}, 0, {15 << 6, 15 << 6}, {255, 128, 128, 255}}},
+    {{{-SP, +SP, +SP}, 0, {15 << 6, 0  << 6}, {255, 128, 128, 255}}},
     // +X face, dark red.
-    {{{+SP, -SP, -SP}, 0, {0, 0}, {128, 0, 0, 255}}},
-    {{{+SP, -SP, +SP}, 0, {0, 0}, {128, 0, 0, 255}}},
-    {{{+SP, +SP, -SP}, 0, {0, 0}, {128, 0, 0, 255}}},
-    {{{+SP, +SP, +SP}, 0, {0, 0}, {128, 0, 0, 255}}},
+    {{{+SP, -SP, -SP}, 0, {0  << 6, 0  << 6}, {128, 0, 0, 255}}},
+    {{{+SP, -SP, +SP}, 0, {15 << 6, 0  << 6}, {128, 0, 0, 255}}},
+    {{{+SP, +SP, -SP}, 0, {15 << 6, 15 << 6}, {128, 0, 0, 255}}},
+    {{{+SP, +SP, +SP}, 0, {0  << 6, 15 << 6}, {128, 0, 0, 255}}},
     // -Y face, bright green.
-    {{{-SP, -SP, -SP}, 0, {0, 0}, {128, 255, 128, 255}}},
-    {{{+SP, -SP, -SP}, 0, {0, 0}, {128, 255, 128, 255}}},
-    {{{-SP, -SP, +SP}, 0, {0, 0}, {128, 255, 128, 255}}},
-    {{{+SP, -SP, +SP}, 0, {0, 0}, {128, 255, 128, 255}}},
+    {{{-SP, -SP, -SP}, 0, {0  << 6, 0  << 6}, {128, 255, 128, 255}}},
+    {{{+SP, -SP, -SP}, 0, {15 << 6, 0  << 6}, {128, 255, 128, 255}}},
+    {{{-SP, -SP, +SP}, 0, {15 << 6, 15 << 6}, {128, 255, 128, 255}}},
+    {{{+SP, -SP, +SP}, 0, {0  << 6, 15 << 6}, {128, 255, 128, 255}}},
     // +Y face, dark green.
-    {{{-SP, +SP, -SP}, 0, {0, 0}, {0, 128, 0, 255}}},
-    {{{+SP, +SP, -SP}, 0, {0, 0}, {0, 128, 0, 255}}},
-    {{{-SP, +SP, +SP}, 0, {0, 0}, {0, 128, 0, 255}}},
-    {{{+SP, +SP, +SP}, 0, {0, 0}, {0, 128, 0, 255}}},
+    {{{-SP, +SP, -SP}, 0, {0  << 6, 0  << 6,},{0, 128, 0, 255}}},
+    {{{+SP, +SP, -SP}, 0, {15 << 6, 0  << 6}, {0, 128, 0, 255}}},
+    {{{-SP, +SP, +SP}, 0, {15 << 6, 15 << 6}, {0, 128, 0, 255}}},
+    {{{+SP, +SP, +SP}, 0, {0  << 6, 15 << 6}, {0, 128, 0, 255}}},
     // -Z face, bright blue.
-    {{{-SP, -SP, -SP}, 0, {0, 0}, {128, 128, 255, 255}}},
-    {{{-SP, +SP, -SP}, 0, {0, 0}, {128, 128, 255, 255}}},
-    {{{+SP, -SP, -SP}, 0, {0, 0}, {128, 128, 255, 255}}},
-    {{{+SP, +SP, -SP}, 0, {0, 0}, {128, 128, 255, 255}}},
+    {{{-SP, -SP, -SP}, 0, {0  << 6, 0  << 6}, {128, 128, 255, 255}}},
+    {{{-SP, +SP, -SP}, 0, {15 << 6, 0  << 6}, {128, 128, 255, 255}}},
+    {{{+SP, -SP, -SP}, 0, {15 << 6, 15 << 6}, {128, 128, 255, 255}}},
+    {{{+SP, +SP, -SP}, 0, {0  << 6, 15 << 6}, {128, 128, 255, 255}}},
     // +Z face, dark blue.
-    {{{-SP, -SP, +SP}, 0, {0, 0}, {0, 0, 128, 255}}},
-    {{{-SP, +SP, +SP}, 0, {0, 0}, {0, 0, 128, 255}}},
-    {{{+SP, -SP, +SP}, 0, {0, 0}, {0, 0, 128, 255}}},
-    {{{+SP, +SP, +SP}, 0, {0, 0}, {0, 0, 128, 255}}},
+    {{{-SP, -SP, +SP}, 0, {0  << 6, 0  << 6}, {0, 0, 128, 255}}},
+    {{{-SP, +SP, +SP}, 0, {15 << 6, 0  << 6}, {0, 0, 128, 255}}},
+    {{{+SP, -SP, +SP}, 0,  {15 << 6, 15 << 6}, {0, 0, 128, 255}}},
+    {{{+SP, +SP, +SP}, 0, {0  << 6, 15 << 6},  {0, 0, 128, 255}}},
 };
 static const Gfx shade_dl[] = {
-      gsDPSetCycleType(G_CYC_2CYCLE),
-    gsSPTexture(0, 0, 0, 0, G_OFF),
-    gsDPSetRenderMode(G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2),
-    gsSPSetGeometryMode(G_SHADE | G_CLIPPING | G_SHADING_SMOOTH | G_TEXTURE_GEN | G_CULL_BACK | G_ZBUFFER),
+  gsDPSetCycleType(G_CYC_1CYCLE),
+  gsDPSetRenderMode(G_RM_AA_ZB_XLU_DECAL, G_RM_AA_ZB_XLU_DECAL2),
+  gsSPTexture(0x8000, 0x8000, 0, 0, G_ON),
+  gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
+  gsDPSetTextureFilter(G_TF_POINT),
+  gsDPLoadTextureBlock(favicon, G_IM_FMT_RGBA, G_IM_SIZ_16b, 16, 16, 0,
+          G_TX_WRAP | G_TX_MIRROR, G_TX_WRAP | G_TX_MIRROR,
+          4, 4, G_TX_NOLOD, G_TX_NOLOD),
     gsSPVertex(shade_vtx,24, 0),
     gsSP2Triangles(0, 1, 2, 0, 2, 1, 3, 0),
     gsSP2Triangles(4, 6, 5, 0, 5, 6, 7, 0),

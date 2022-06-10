@@ -13,6 +13,8 @@
 #include "../Models/N64Logo.h"
 #include "../Models/PlyCube.h"
 #include "../Models/N64LogoSmallColor.h"
+#include "../Models/N64LogoSmall.h"
+#include "../Models/N64LogoUV1.h"
 
 void CreateMesh(Dynamic* dynamicp, Mesh mesh);
 Dynamic      gfx_dynamic;
@@ -53,6 +55,7 @@ void Stage00_Draw()
 	  1.0F, 10.0F, 1.0F);
               */
 
+
  guPerspective(&gfx_dynamic.projection, &perspNorm, 60, 320.0f / 240.0f,
         1, 1024, 1.0F);
 
@@ -61,12 +64,16 @@ void Stage00_Draw()
     200.0f, 200.0f, 700.0f, // eye
     0.0f, 0.0f, 0.0f,       // look at
     0.0f, 1.0f, 0.0f);      // up
-    shade_mesh(&current_mesh2);
+    //shade_mesh(&current_mesh2);
+    //triangle_mesh(&current_mesh);
+    //PlyCube_mesh();
+    //N64LogoUV1_mesh();
     N64LogoSmallColor_mesh();
     
 
     //gSPDisplayList(glistp++, OS_K0_TO_PHYSICAL(current_mesh2.settings));
     gSPDisplayList(glistp++, OS_K0_TO_PHYSICAL(current_mesh.settings));
+
 
     CreateMesh(&gfx_dynamic, current_mesh);
     //gSPDisplayList(glistp++, OS_K0_TO_PHYSICAL(current_mesh2.settings));
@@ -79,7 +86,7 @@ void Stage00_Draw()
     /* Activate the RSP task.  Switch display buffers at the end of the task. */
     nuGfxTaskStart(glist,
             (s32)(glistp - glist) * sizeof (Gfx),
-            NU_GFX_UCODE_F3DEX , NU_SC_SWAPBUFFER);
+            NU_GFX_UCODE_F3DEX2_REJ , NU_SC_SWAPBUFFER);
 
 
     /*
