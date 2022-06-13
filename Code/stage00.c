@@ -16,6 +16,8 @@
 #include "../Models/N64LogoSmall.h"
 #include "../Models/N64LogoUV1.h"
 
+
+void shadetri(Dynamic* dynamicp);
 void CreateMesh(Dynamic* dynamicp, Mesh mesh);
 Dynamic      gfx_dynamic;
 Mesh         current_mesh;
@@ -43,27 +45,35 @@ void Stage00_Draw()
 
   glistp = glist;
 
-  RCPInit(glistp);
+  RCPInit();
+  
 
   //Clears Z buffer.
   gfxClearCfb();
 
-/*
+
+  /* The set of projection modeling matrices  */
+  /*
   guOrtho(&gfx_dynamic.projection,
 	  -(float)SCREEN_WD/2.0F, (float)SCREEN_WD/2.0F,
 	  -(float)SCREEN_HT/2.0F, (float)SCREEN_HT/2.0F,
 	  1.0F, 10.0F, 1.0F);
-              */
+      */
+  guRotate(&gfx_dynamic.modeling, 0.0F, 0.0F, 0.0F, 1.0F);
 
+  /* Draw a square  */
+
+  //shadetri(&gfx_dynamic);
+  //triangle_mesh(&current_mesh);
 
  guPerspective(&gfx_dynamic.projection, &perspNorm, 60, 320.0f / 240.0f,
         1, 1024, 1.0F);
-
 
     guLookAt(&gfx_dynamic.camera,            //
     200.0f, 200.0f, 700.0f, // eye
     0.0f, 0.0f, 0.0f,       // look at
     0.0f, 1.0f, 0.0f);      // up
+  CreateMesh(&gfx_dynamic, current_mesh);
     //shade_mesh(&current_mesh2);
     //triangle_mesh(&current_mesh);
     //PlyCube_mesh();
@@ -75,7 +85,7 @@ void Stage00_Draw()
     gSPDisplayList(glistp++, OS_K0_TO_PHYSICAL(current_mesh.settings));
 
 
-    CreateMesh(&gfx_dynamic, current_mesh);
+    //CreateMesh(&gfx_dynamic, current_mesh);
     //gSPDisplayList(glistp++, OS_K0_TO_PHYSICAL(current_mesh2.settings));
   
     /* End the construction of the display list  */
@@ -217,10 +227,36 @@ void CreateMesh(Dynamic* dynamicp, Mesh mesh)
     gSPMatrix(glistp++,OS_K0_TO_PHYSICAL(&(dynamicp->modeling)),
         G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
 
-    guRotate(&gfx_dynamic.rotate_x, time*100, 0.0F, 1.0F, 0.0F);
+    guRotate(&gfx_dynamic.rotate_x, time*10, 0.0F, 1.0F, 0.0F);
     gSPMatrix(glistp++, K0_TO_PHYS(&(gfx_dynamic.rotate_x)),
         G_MTX_PROJECTION | G_MTX_MUL | G_MTX_NOPUSH);
 
+}
 
+/* The vertex coordinate  */
+static Vtx shade_vtxDEBUG[] =  {
+        {        -64,  64, -5, 0, 0, 0, 0, 0xff, 0, 0xff	},
+        {         64,  64, -5, 0, 0, 0, 0, 0, 0, 0xff	},
+        {         64, -64, -5, 0, 0, 0, 0, 0, 0xff, 0xff	},
+        {        -64, -64, -5, 0, 0, 0, 0xff, 0, 0, 0xff	},
+};
 
+/* Draw a square  */
+void shadetri(Dynamic* dynamicp)
+{
+    /*
+  gSPMatrix(glistp++,OS_K0_TO_PHYSICAL(&(dynamicp->projection)),
+		G_MTX_PROJECTION|G_MTX_LOAD|G_MTX_NOPUSH);
+  gSPMatrix(glistp++,OS_K0_TO_PHYSICAL(&(dynamicp->modeling)),
+		G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
+*/
+  gSPVertex(glistp++,&(shade_vtxDEBUG[0]),4, 0);
+
+  gDPPipeSync(glistp++);
+  gDPSetCycleType(glistp++,G_CYC_1CYCLE);
+  gDPSetRenderMode(glistp++,G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
+  gSPClearGeometryMode(glistp++,0xFFFFFFFF);
+  gSPSetGeometryMode(glistp++,G_SHADE| G_SHADING_SMOOTH);
+
+  gSP2Triangles(glistp++,0,1,2,0,0,2,3,0);
 }

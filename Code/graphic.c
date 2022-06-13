@@ -10,6 +10,10 @@ static Vp viewport = {
   SCREEN_WD*2, SCREEN_HT*2, G_MAXZ/2, 0, //Position of the center.
 };
 
+
+/*
+  The initialization of RDP 
+*/
 Gfx const rspinit_dl[] = {
     gsSPViewport(&viewport), //Set viewport.
      //What each bit means: http://n64devkit.square7.ch/n64man/gsp/gSPClearGeometryMode.htm
@@ -33,9 +37,7 @@ Gfx const rdpinit_dl[] = {
     
 };
 
-
-
-void RCPInit(Gfx *glistp)
+void RCPInit(void)
 {
     gSPSegment(glistp++, 0, 0); //initialize segment register. Keeps track of display list.
     gSPDisplayList(glistp++, OS_K0_TO_PHYSICAL(rspinit_dl));
@@ -44,7 +46,6 @@ void RCPInit(Gfx *glistp)
 
 void gfxClearCfb(void)
 {
-  
   /* Clear the Z-buffer  */
   gDPSetDepthImage(glistp++, OS_K0_TO_PHYSICAL(nuGfxZBuffer));
   gDPSetCycleType(glistp++, G_CYC_FILL);
