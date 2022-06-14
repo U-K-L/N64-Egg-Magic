@@ -88,7 +88,6 @@ void ClearBackground(u8 r, u8 g, u8 b)
 
 void DisplayText(const char*text)
 {
-    //From Hello world example
     nuDebConDisp(NU_SC_SWAPBUFFER); // Displays the console window. NU_SC_SWAPBUFFER = Swap frame buffer
     nuDebConClear(NU_DEB_CON_WINDOW0); // Clears the console window. NU_DEB_CON_WINDOW0 = Window 0
     nuDebConTextColor(NU_DEB_CON_WINDOW0, NU_DEB_CON_TEXT_LIGHTBLUE); // Changes the color of text displayed in the console window
@@ -117,32 +116,4 @@ void CreateMesh(Dynamic* dynamicp, Mesh mesh)
     gSPMatrix(glistp++, K0_TO_PHYS(&(gfx_dynamic.rotate_x)),
         G_MTX_PROJECTION | G_MTX_MUL | G_MTX_NOPUSH);
 
-}
-
-/* The vertex coordinate  */
-static Vtx shade_vtxDEBUG[] =  {
-        {        -64,  64, -5, 0, 0, 0, 0, 0xff, 0, 0xff	},
-        {         64,  64, -5, 0, 0, 0, 0, 0, 0, 0xff	},
-        {         64, -64, -5, 0, 0, 0, 0, 0, 0xff, 0xff	},
-        {        -64, -64, -5, 0, 0, 0, 0xff, 0, 0, 0xff	},
-};
-
-/* Draw a square  */
-void shadetri(Dynamic* dynamicp)
-{
-    /*
-  gSPMatrix(glistp++,OS_K0_TO_PHYSICAL(&(dynamicp->projection)),
-		G_MTX_PROJECTION|G_MTX_LOAD|G_MTX_NOPUSH);
-  gSPMatrix(glistp++,OS_K0_TO_PHYSICAL(&(dynamicp->modeling)),
-		G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
-*/
-  gSPVertex(glistp++,&(shade_vtxDEBUG[0]),4, 0);
-
-  gDPPipeSync(glistp++);
-  gDPSetCycleType(glistp++,G_CYC_1CYCLE);
-  gDPSetRenderMode(glistp++,G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
-  gSPClearGeometryMode(glistp++,0xFFFFFFFF);
-  gSPSetGeometryMode(glistp++,G_SHADE| G_SHADING_SMOOTH);
-
-  gSP2Triangles(glistp++,0,1,2,0,0,2,3,0);
 }
