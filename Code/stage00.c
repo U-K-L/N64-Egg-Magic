@@ -35,22 +35,21 @@ void Stage00_UpdateFrame()
 
 void Stage00_Draw()
 {
+    glistp = glist;
 
-  glistp = glist;
+    RCPInit();
+    
 
-  RCPInit();
-  
-
-  //Clears Z buffer.
-  gfxClearCfb();
+    //Clears Z buffer.
+    gfxClearCfb();
 
 
-  /* The set of projection modeling matrices  */
-  guRotate(&gfx_dynamic.modeling, 0.0F, 0.0F, 0.0F, 1.0F);
+    /* The set of projection modeling matrices  */
+    guRotate(&gfx_dynamic.modeling, 0.0F, 0.0F, 0.0F, 1.0F);
 
-  /* Draw a square  */
- guPerspective(&gfx_dynamic.projection, &perspNorm, 60, 320.0f / 240.0f,
-        1, 1024, 1.0F);
+    /* Draw a square  */
+    guPerspective(&gfx_dynamic.projection, &perspNorm, 60, 320.0f / 240.0f,
+            1, 1024, 1.0F);
 
     guLookAt(&gfx_dynamic.camera,            //
     200.0f, 200.0f, 700.0f, // eye
