@@ -85,7 +85,6 @@ void ClearBackground(u8 r, u8 g, u8 b)
     gDPPipeSync(glistp++);
 }
 
-
 void DisplayText(const char*text)
 {
     nuDebConDisp(NU_SC_SWAPBUFFER); // Displays the console window. NU_SC_SWAPBUFFER = Swap frame buffer
